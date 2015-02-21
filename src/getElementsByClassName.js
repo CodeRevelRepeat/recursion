@@ -8,38 +8,44 @@ var getElementsByClassName = function(className
 ){
 
 	var foundElements = [];
+
 	
 
 	var checkNode = function(node, className){
 
-		if(node.nodeType === document.ELEMENT_NODE && node.childNodes.length > 0){
-			for(var i=0; i< node.childNodes.length; i++){
-				//if(node.childNodes[i].className.toUpperCase() === className.toUpperCase()){
-					//foundElements.push(node.childNodes[i]);
+		if(node.nodeType === document.ELEMENT_NODE){
 
+			if(node.childNodes.length > 0){
+
+				//Checks to see if the target class name appears within className.  Checking equality will not work since
+				//it is possible there is more than one assigned class so className returns the different classes separated by a space.
+				//Also checks to make sure node has not already been included in foundElements.
+
+				if(node.className.indexOf(className) > -1 && foundElements.indexOf(node) < 0){
+					foundElements.push(node);
+				}
+
+				for(var i=0; i< node.childNodes.length; i++){
+				
 				checkNode(node.childNodes[i], className);
 				}
+			
 			}
 
-		if(node.nodeType === document.ELEMENT_NODE){
-			if(node.className.toUpperCase() === className.toUpperCase()){
-				console.log("node going in: " + node);
+			//Base case if there are no further children:
+
+		
+			if(node.className.indexOf(className) > -1 && foundElements.indexOf(node) < 0){
 				foundElements.push(node);
 			}
+			
 		}
 	};
 
+	
 	checkNode(document.body, className);
 
-	console.log(foundElements);
-	//console.log(foundElements.reverse());
-
-	//var reversedElements = foundElements.reverse();
-	//var reversedElements = [];
-
-	// for(var j= foundElements.length-1; j>=0; j--){
-	// 	reversedElements.push(foundElements[j]);
-	// }
+	
 	return foundElements;
  
 };
