@@ -6,18 +6,17 @@
 var stringifyJSON = function(obj) {
 
 
-var masterResult = [];
+var masterResult;
 
 
 
-	var stringifyArray = function(obj){
+	var stringifyArray = function(array){
 
 		var result = [];
 
-
-		for(var i=0; i< obj.length; i++){
+		for(var i=0; i< array.length; i++){
 			console.log("doing the array thing");
-			var value = obj[i];
+			var value = array[i];
 
 			if(typeof value === 'undefined' || typeof value === 'function' || typeof value === 'symbol'){
 				result.push('null');
@@ -28,52 +27,62 @@ var masterResult = [];
 				result.push(stringifyJSON(value));
 				}
 
-			masterResult.push(result);
 			}
+			console.log("done array looping");
+
+			console.log(result);
+			return result; 
 	};
 
 
-	var stringifyObject = function(obj){
+	var stringifyObject = function(innerObj){
 
 		var newObj = {};
 
 
-		for(var key in obj){
-				newObj[stringifyJSON(key)] = stringifyJSON(obj[key]);
-		}
+		for(var key in innerObj){
+				if(typeof key === 'number' || typeof key === 'string' && 
+					typeof innerObj[key] === 'number' || typeof innerObj[key] === 'string' || typeof innerObj[key] === 'boolean'){
+
+
+				newObj[stringifyJSON(key)] = stringifyJSON(innerObj[key]);
+				}
+			}
+
+		return newObj;
 
 	};
 				
 
 
 				if(obj === null){
-					masterResult.push("null");
+					return "null";
 				}
 
 
 				if(typeof obj === 'number'){
 					console.log('thinks i am a primitive number')
-					masterResult.push(String(obj));
+					return String(obj);
 				}
 
 				if(typeof obj === 'string'){
-					masterResult.push('"' + obj + '"');
+					return ('"' + obj + '"');
 
 				}
 
 				if(typeof obj === 'boolean'){
-					masterResult.push(obj.toString());
+					return obj.toString();
 				}
 
 
 				if(Array.isArray(obj)){
 					console.log("thinks i'm an array")
-					stringifyArray(obj);
+					masterResult = '[' + stringifyArray(obj).toString() + ']';
 				}
 
-				if(typeof obj === 'object'){
+				if(typeof obj === 'object' && !Array.isArray(obj)){
 					console.log("thinks i'm a default object");
-					stringifyObject(obj);
+					masterResult = stringifyObject(obj);
 				}
 
 		
@@ -81,12 +90,14 @@ var masterResult = [];
 
 		//if(masterResult.length === 1){
 
-			return masterResult[0];
+		//	return masterResult[0];
 		//}
 
 		//else{
 		//	return masterResult;
 		//}
+
+			return masterResult;
 
 		};
 
